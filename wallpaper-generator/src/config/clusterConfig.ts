@@ -1,47 +1,56 @@
-import icons from './symbolConfig';
-import { IconDefinition } from '@fortawesome/fontawesome-common-types';
-import { faHeart } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { getRandomIcon } from './symbolConfig';
 
-const icon: IconDefinition = faHeart;
+export interface ClusterConfig {
+  numClusters: number;
+  clusterRadius: number;
+  clusterDensity: number;
+  canvasWidth: number;
+  canvasHeight: number;
+}
 
-const width = 100;
-const height = 100;
-const distance = 100;
+export interface Cluster {
+  x: number;
+  y: number;
+  intensity: number;
+}
 
+export interface IconPosition {
+  icon: IconDefinition;
+  x: number;
+  y: number;
+}
 
-const iconArray = [];
+export function createClusters(config: ClusterConfig): Cluster[] {
+  const { numClusters, canvasWidth, canvasHeight } = config;
+  return Array.from({ length: numClusters }, () => ({
+    x: Math.random() * canvasWidth,
+    y: Math.random() * canvasHeight,
+    intensity: Math.random() * 0.5 + 0.5 // Random intensity between 0.5 and 1
+  }));
+}
 
-for (let i = 0; i < width; i += distance) {
-    for (let j = 0; j < height; j += distance) {
-      const icon = icons[Math.floor(Math.random() * icons.length)];
-      iconArray.push({
-        icon,
-        x: i,
-        y: j,
-      });
+export function createIconArray(clusters: Cluster[], config: ClusterConfig): IconPosition[] {
+  const { clusterRadius, clusterDensity, canvasWidth, canvasHeight } = config;
+  const iconArray: IconPosition[] = [];
+
+  clusters.forEach(cluster => {
+    const numIcons = Math.floor(clusterDensity * cluster.intensity);
+    for (let i = 0; i < numIcons; i++) {
+      const angle = Math.random() * 2 * Math.PI;
+      const distance = Math.random() * clusterRadius;
+      const x = cluster.x + distance * Math.cos(angle);
+      const y = cluster.y + distance * Math.sin(angle);
+
+      if (x >= 0 && x < canvasWidth && y >= 0 && y < canvasHeight) {
+        iconArray.push({
+          icon: getRandomIcon(),
+          x,
+          y
+        });
+      }
     }
-  }
-  
-  // Shuffle the array to randomize the placement of symbols
-  iconArray.sort(() => Math.random() - 0.5);
+  });
 
-
-
-  const numClusters = 5; // Anzahl der Cluster
-  const clusterConfig = {
-    // Konfiguration für Cluster
-  };
-  
-  function createClusters() {
-    // Logik zur Erstellung der Cluster basierend auf den Konfigurationen
-  }
-  
-  interface Cluster {
-    x: number;
-    y: number;
-    intensity: number; // Intensität des Clusters (abnehmend nach außen)
-  }
-  
-  const clusterConfig = {};
-
-  export { clusterConfig };
+  return iconArray;
+}

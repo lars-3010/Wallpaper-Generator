@@ -1,53 +1,34 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
+import { library, IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { faCamera, faCar, faHeart, faStar, faMusic } from '@fortawesome/free-solid-svg-icons';
 
-const icons = [
-    { prefix: 'fas', iconName: 'camera', width: 20, height: 20, angle: 45 },
-    { prefix: 'fas', iconName: 'car', width: 25, height: 25, angle: 90 }
-  ];
-  
-  const formattedIcons = icons.map(iconProps => {
-    const { width, height, angle, ...rest } = iconProps;
-    const iconInstance = icon({ ...rest });
-    iconInstance.width = width;
-    iconInstance.height = height;
-    iconInstance.icon[4] = angle;
-    return iconInstance;
-  });
-  
-  // Liste von Icons mit angepassten Eigenschaften
-// Erstellen einer Funktion, um die Symbole zur Bibliothek hinzuzufügen
+export interface IconConfig {
+  icon: IconDefinition;
+  width: number;
+  height: number;
+  angle: number;
+}
 
+const icons: IconConfig[] = [
+  { icon: faCamera, width: 20, height: 20, angle: 45 },
+  { icon: faCar, width: 25, height: 25, angle: 90 },
+  { icon: faHeart, width: 22, height: 22, angle: 0 },
+  { icon: faStar, width: 18, height: 18, angle: 60 },
+  { icon: faMusic, width: 24, height: 24, angle: 30 }
+];
 
-function getRandomIcon() {
+export function addIconsToLibrary(): void {
+  icons.forEach(({ icon }) => library.add(icon));
+}
+
+export function getRandomIcon(): IconDefinition {
   const randomIndex = Math.floor(Math.random() * icons.length);
-  return icons[randomIndex];
+  return icons[randomIndex].icon;
 }
 
-
-
-
-
-// Du musst die Funktion importieren, die dem Namen jedes Symbols entspricht
-function addIcons() {
-  for (const icon of icons) {
-
-    // Extrahieren des Präfixes und des Namens des Symbols
-    const [prefix, name] = icon.split('-');
-
-    // Importieren der Funktion dynamisch
-    import(`@fortawesome/free-solid-svg-icons/${prefix}/${name}`).then(
-      (module) => {
-        // Hinzufügen des Symbols zur Bibliothek
-        library.add(module.default);
-      }
-    );
-  }
+export function getRandomSymbol(): IconConfig {
+  return icons[Math.floor(Math.random() * icons.length)];
 }
 
-// Aufrufen der Funktion
-addIcons();
+addIconsToLibrary();
 
-
-// Exportieren der Liste von Symbolen
 export default icons;
-export { icons };
