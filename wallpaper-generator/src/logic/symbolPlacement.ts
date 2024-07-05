@@ -1,63 +1,80 @@
-interface Cluster {
-    x: number;
-    y: number;
-    intensity: number;
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
+import { Cluster } from '../config/clusterConfig';
+import { getRandomSymbol } from '../config/symbolConfig';
+
+export interface PlacedSymbol {
+  x: number;
+  y: number;
+  icon: IconDefinition;
+  size: number;
+  color: string;
 }
 
 export class SymbolPlacement {
-    private symbols: string[];
-    private placement: string[][];
+  private width: number;
+  private height: number;
+  private symbols: PlacedSymbol[];
 
-    constructor(symbols: string[], width: number, height: number) {
-        this.symbols = symbols;
-        this.placement = Array.from({length: height}, () => Array.from({length: width}, () => null));
-    }
+  constructor(width: number, height: number) {
+    this.width = width;
+    this.height = height;
+    this.symbols = [];
+  }
 
-    // Places symbols on the grid
-    placeSymbols(): void {
-        for (let y = 0; y < this.placement.length; y++) {
-            for (let x = 0; x < this.placement[y].length; x++) {
-                const symbol = this.getRandomSymbol();
-                this.placement[y][x] = symbol;
-            }
-        }
-    }
+  placeSymbolsInClusters(clusters: Cluster[], clusterRadius: number, symbolsPerCluster: number): void {
+    clusters.forEach(cluster => {
+      for (let i = 0; i < symbolsPerCluster; i++) {
+        const symbol = this.createSymbolInCluster(cluster, clusterRadius);
+        if (symbol) this.symbols.push(symbol);
+      }
+    });
+  }
 
-    // Returns a random symbol from the symbol set
-    getRandomSymbol(): string {
-        const randomIndex = Math.floor(Math.random() * this.symbols.length);
-        return this.symbols[randomIndex];
+  placeRandomSymbols(count: number): void {
+    for (let i = 0; i < count; i++) {
+      const symbol = this.createRandomSymbol();
+      this.symbols.push(symbol);
     }
+  }
 
-    // Returns the current placement grid
-    getPlacement(): string[][] {
-        return this.placement;
-    }
+  private createSymbolInCluster(cluster: Cluster, radius: number): PlacedSymbol | null {
+    const angle = Math.random() * 2 * Math.PI;
+    const distance = Math.random() * radius * Math.sqrt(cluster.intensity);
+    const x = cluster.x + distance * Math.cos(angle);
+    const y = cluster.y + distance * Math.sin(angle);
 
-    // Places symbols in a cluster
-    placeSymbolsInCluster(cluster: Cluster, symbolRadius: number): void {
-        const numSymbols = Math.round(cluster.intensity);
-        for (let i = 0; i < numSymbols; i++) {
-            const x = this.gaussianRandom(cluster.x, symbolRadius);
-            const y = this.gaussianRandom(cluster.y, symbolRadius);
-            const symbol = this.getRandomSymbol();
-            if (x >= 0 && x < this.placement[0].length && y >= 0 && y < this.placement.length) {
-                this.placement[y][x] = symbol;
-            }
-        }
+    if (x >= 0 && x < this.width && y >= 0 && y < this.height) {
+      return this.createSymbol(x, y, cluster.intensity);
     }
+    return null;
+  }
 
-    // Generates a normally distributed random number
-    gaussianRandom(mean: number, stdDev: number, iteration = 0): number {
-        let random1 = Math.random();
-        let random2 = Math.random();
-        let gaussianRandom = Math.sqrt(-2.0 * Math.log(random1)) * Math.cos(2.0 * Math.PI * random2);
-        gaussianRandom = gaussianRandom / 10.0 + 0.5;
-        if (gaussianRandom < 0 || gaussianRandom > 1) {
-            return this.gaussianRandom(mean, stdDev, iteration + 1);
-        }
-        gaussianRandom *= stdDev;
-        gaussianRandom += mean;
-        return gaussianRandom;
-    }
+  private createRandomSymbol(): PlacedSymbol {
+    const x = Math.random() * this.width;
+    const y = Math.random() * this.height;
+    return this.createSymbol(x, y, 0.5);
+  }
+
+  private createSymbol(x: number, y: number, intensity: number): PlacedSymbol {
+    const { icon } = getRandomSymbol();
+    const size = 20 + Math.random() * 20 * intensity;
+    const color = this.getRandomColor();
+    return { x, y, icon, size, color };
+  }
+
+  private getRandomColor(): string {
+    const colors = ['#F92672', '#A6E22E', '#FD971F', '#66D9EF', '#AE81FF'];
+    return colors[Math.floor(Math.random() * colors.length)];
+  }
+
+  getSymbols(): PlacedSymbol[] {
+    return this.symbols;
+  }
+
+  gaussianRandom(mean: number, stdDev: number): number {
+    const u = 1 - Math.random();
+    const v = Math.random();
+    const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+    return z * stdDev + mean;
+  }
 }

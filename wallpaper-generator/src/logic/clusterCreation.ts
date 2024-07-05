@@ -1,36 +1,19 @@
-/**
- * Interface for a Cluster
- */
-export interface Cluster {
-  x: number;
-  y: number;
-  intensity: number; // Intensity of the cluster (decreasing outward)
-}
+import { Cluster, ClusterConfig } from '../config/clusterConfig';
 
-/**
- * Function to create clusters
- * @param numClusters - Number of clusters to create
- * @param maxX - Maximum width of the wallpaper
- * @param maxY - Maximum height of the wallpaper
- * @param maxIntensity - Maximum intensity of the clusters
- * @returns Array of clusters
- */
-export function createClusters(numClusters: number, maxX: number, maxY: number, maxIntensity: number): Cluster[] {
-  return Array.from({length: numClusters}, (_, i) => {
-    const x = Math.random() * maxX;
-    const y = Math.random() * maxY;
-    const intensity = maxIntensity - (i / numClusters) * maxIntensity; // Decreasing intensity
+export function createClusters(config: ClusterConfig): Cluster[] {
+  const { numClusters, canvasWidth, canvasHeight, clusterDensity } = config;
+  
+  return Array.from({ length: numClusters }, (_, i) => {
+    const x = Math.random() * canvasWidth;
+    const y = Math.random() * canvasHeight;
+    const intensity = clusterDensity * (1 - i / numClusters); // Decreasing intensity
     return { x, y, intensity };
   });
 }
 
-// Usage
-const numClusters = 5; // Number of clusters
-const maxX = 1000; // Maximum width of the wallpaper
-const maxY = 1000; // Maximum height of the wallpaper
-const maxIntensity = 10; // Maximum intensity of the clusters
-
-const clusters = createClusters(numClusters, maxX, maxY, maxIntensity);
-
-// Use the generated clusters in the wallpaper
-
+export function adjustClusterIntensity(clusters: Cluster[], strength: number): Cluster[] {
+  return clusters.map(cluster => ({
+    ...cluster,
+    intensity: cluster.intensity * strength
+  }));
+}
