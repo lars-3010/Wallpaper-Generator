@@ -2,13 +2,13 @@ import { library, IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { faCamera, faCar, faHeart, faStar, faMusic } from '@fortawesome/free-solid-svg-icons';
 
 export interface IconConfig {
-  icon: IconDefinition;
-  width: number;
-  height: number;
-  angle: number;
+  readonly icon: IconDefinition;
+  readonly width: number;
+  readonly height: number;
+  readonly angle: number;
 }
 
-const icons: IconConfig[] = [
+const icons: ReadonlyArray<IconConfig> = [
   { icon: faCamera, width: 20, height: 20, angle: 45 },
   { icon: faCar, width: 25, height: 25, angle: 90 },
   { icon: faHeart, width: 22, height: 22, angle: 0 },
@@ -21,8 +21,7 @@ export function addIconsToLibrary(): void {
 }
 
 export function getRandomIcon(): IconDefinition {
-  const randomIndex = Math.floor(Math.random() * icons.length);
-  return icons[randomIndex].icon;
+  return icons[Math.floor(Math.random() * icons.length)].icon;
 }
 
 export function getRandomSymbol(): IconConfig {

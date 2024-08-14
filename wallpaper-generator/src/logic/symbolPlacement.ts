@@ -3,16 +3,16 @@ import { Cluster } from '../config/clusterConfig';
 import { getRandomSymbol } from '../config/symbolConfig';
 
 export interface PlacedSymbol {
-  x: number;
-  y: number;
-  icon: IconDefinition;
-  size: number;
-  color: string;
+  readonly x: number;
+  readonly y: number;
+  readonly icon: IconDefinition;
+  readonly size: number;
+  readonly color: string;
 }
 
 export class SymbolPlacement {
-  private width: number;
-  private height: number;
+  private readonly width: number;
+  private readonly height: number;
   private symbols: PlacedSymbol[];
 
   constructor(width: number, height: number) {
@@ -21,20 +21,22 @@ export class SymbolPlacement {
     this.symbols = [];
   }
 
-  placeSymbolsInClusters(clusters: Cluster[], clusterRadius: number, symbolsPerCluster: number): void {
+  placeSymbolsInClusters(clusters: ReadonlyArray<Cluster>, clusterRadius: number, symbolsPerCluster: number): ReadonlyArray<PlacedSymbol> {
     clusters.forEach(cluster => {
       for (let i = 0; i < symbolsPerCluster; i++) {
         const symbol = this.createSymbolInCluster(cluster, clusterRadius);
         if (symbol) this.symbols.push(symbol);
       }
     });
+    return this.symbols;
   }
 
-  placeRandomSymbols(count: number): void {
+  placeRandomSymbols(count: number): ReadonlyArray<PlacedSymbol> {
     for (let i = 0; i < count; i++) {
       const symbol = this.createRandomSymbol();
       this.symbols.push(symbol);
     }
+    return this.symbols;
   }
 
   private createSymbolInCluster(cluster: Cluster, radius: number): PlacedSymbol | null {
@@ -67,7 +69,7 @@ export class SymbolPlacement {
     return colors[Math.floor(Math.random() * colors.length)];
   }
 
-  getSymbols(): PlacedSymbol[] {
+  getSymbols(): ReadonlyArray<PlacedSymbol> {
     return this.symbols;
   }
 

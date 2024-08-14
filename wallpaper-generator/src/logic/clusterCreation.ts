@@ -1,6 +1,6 @@
 import { Cluster, ClusterConfig } from '../config/clusterConfig';
 
-export function createClusters(config: ClusterConfig): Cluster[] {
+export function createClusters(config: ClusterConfig): ReadonlyArray<Cluster> {
   const { numClusters, canvasWidth, canvasHeight, clusterDensity } = config;
   
   return Array.from({ length: numClusters }, (_, i) => {
@@ -11,7 +11,7 @@ export function createClusters(config: ClusterConfig): Cluster[] {
   });
 }
 
-export function adjustClusterIntensity(clusters: Cluster[], strength: number): Cluster[] {
+export function adjustClusterIntensity(clusters: ReadonlyArray<Cluster>, strength: number): ReadonlyArray<Cluster> {
   return clusters.map(cluster => ({
     ...cluster,
     intensity: cluster.intensity * strength

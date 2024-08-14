@@ -2,26 +2,26 @@ import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import { getRandomIcon } from './symbolConfig';
 
 export interface ClusterConfig {
-  numClusters: number;
-  clusterRadius: number;
-  clusterDensity: number;
-  canvasWidth: number;
-  canvasHeight: number;
+  readonly numClusters: number;
+  readonly clusterRadius: number;
+  readonly clusterDensity: number;
+  readonly canvasWidth: number;
+  readonly canvasHeight: number;
 }
 
 export interface Cluster {
-  x: number;
-  y: number;
-  intensity: number;
+  readonly x: number;
+  readonly y: number;
+  readonly intensity: number;
 }
 
 export interface IconPosition {
-  icon: IconDefinition;
-  x: number;
-  y: number;
+  readonly icon: IconDefinition;
+  readonly x: number;
+  readonly y: number;
 }
 
-export function createClusters(config: ClusterConfig): Cluster[] {
+export function createClusters(config: ClusterConfig): ReadonlyArray<Cluster> {
   const { numClusters, canvasWidth, canvasHeight } = config;
   return Array.from({ length: numClusters }, () => ({
     x: Math.random() * canvasWidth,
@@ -30,7 +30,7 @@ export function createClusters(config: ClusterConfig): Cluster[] {
   }));
 }
 
-export function createIconArray(clusters: Cluster[], config: ClusterConfig): IconPosition[] {
+export function createIconArray(clusters: ReadonlyArray<Cluster>, config: ClusterConfig): ReadonlyArray<IconPosition> {
   const { clusterRadius, clusterDensity, canvasWidth, canvasHeight } = config;
   const iconArray: IconPosition[] = [];
 

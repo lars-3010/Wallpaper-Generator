@@ -6,13 +6,13 @@ export interface SymbolPosition {
   position: { x: number; y: number };
 }
 
-export interface ArrayConfig {
+export interface SymbolArrayConfig {
   numRows: number;
   numCols: number;
   symbolSpacing: number;
 }
 
-export function createSymbolArray(config: ArrayConfig): SymbolPosition[][] {
+export function createSymbolArray(config: SymbolArrayConfig): ReadonlyArray<ReadonlyArray<SymbolPosition>> {
   const { numRows, numCols, symbolSpacing } = config;
   const symbolArray: SymbolPosition[][] = [];
 
@@ -28,5 +28,13 @@ export function createSymbolArray(config: ArrayConfig): SymbolPosition[][] {
     }
   }
 
-  return symbolArray;
+  return symbolArray as ReadonlyArray<ReadonlyArray<SymbolPosition>>;
+}
+
+export function validateSymbolArrayConfig(config: SymbolArrayConfig): boolean {
+  return (
+    config.numRows > 0 &&
+    config.numCols > 0 &&
+    config.symbolSpacing > 0
+  );
 }

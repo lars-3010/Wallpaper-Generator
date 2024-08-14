@@ -2,18 +2,13 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 
-import { library, config } from '@fortawesome/fontawesome-svg-core'
-import { faUserSecret } from '@fortawesome/free-solid-svg-icons'
+import { config } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon, FontAwesomeLayers, FontAwesomeLayersText } from '@fortawesome/vue-fontawesome'
 
-import { icons } from './config/symbolConfig';
-import { clusterConfig } from './config/clusterConfig';
-import { createClusters } from './logic/clusterCreation';
-import { rotateWallpaper } from './logic/wallpaperRotation';
+import { setupIcons } from './config/iconSetup.ts';
 
-// Hinzufügen von Symbolen zur Bibliothek
-library.add(faUserSecret)
-icons.forEach(icon => library.add(icon));
+// Set up icons
+setupIcons();
 
 config.styleDefault = "duotone";
 

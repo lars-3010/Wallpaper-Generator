@@ -1,6 +1,6 @@
 import { PlacedSymbol } from './symbolPlacement';
 
-export function rotateWallpaper(symbols: PlacedSymbol[], angle: number, width: number, height: number): PlacedSymbol[] {
+export function rotateWallpaper(symbols: ReadonlyArray<PlacedSymbol>, angle: number, width: number, height: number): ReadonlyArray<PlacedSymbol> {
   const centerX = width / 2;
   const centerY = height / 2;
   const radians = (angle * Math.PI) / 180;
@@ -28,7 +28,7 @@ export function rotateWallpaper(symbols: PlacedSymbol[], angle: number, width: n
   });
 }
 
-export function flipWallpaper(symbols: PlacedSymbol[], flipHorizontal: boolean, flipVertical: boolean, width: number, height: number): PlacedSymbol[] {
+export function flipWallpaper(symbols: ReadonlyArray<PlacedSymbol>, flipHorizontal: boolean, flipVertical: boolean, width: number, height: number): ReadonlyArray<PlacedSymbol> {
   return symbols.map(symbol => {
     let { x, y } = symbol;
 
